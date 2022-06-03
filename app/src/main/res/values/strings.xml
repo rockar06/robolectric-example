@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">RobolectricExample</string>
+    <string name="increase_counter">Increase counter</string>
+</resources>
