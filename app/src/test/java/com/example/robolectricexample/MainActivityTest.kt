@@ -1,43 +1,57 @@
 package com.example.robolectricexample
 
-import android.widget.TextView
-import com.google.common.truth.Truth.assertThat
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.rules.ActivityScenarioRule
+import org.hamcrest.core.AllOf.allOf
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Robolectric.buildActivity
 import org.robolectric.RobolectricTestRunner
 
+/*@Config(
+    instrumentedPackages = ["androidx.loader.content"]
+)*/
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
 
+    @get:Rule
+    val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
     @Test
     fun mainActivity_counterTextView_defaultContentIsDisplayed() {
-        val controller = buildActivity(MainActivity::class.java).setup()
-        val textViewUnderTest = controller.get().findViewById<TextView>(R.id.tv_counter)
-        assertThat(textViewUnderTest.text.toString()).isEqualTo("0")
+        onView(
+            allOf(
+                withId(R.id.tv_counter), withText("0")
+            )
+        ).check(matches(isDisplayed()))
     }
 
     @Test
     fun mainActivity_counterTextView_oneIsDisplayed() {
-        val controller = buildActivity(MainActivity::class.java).setup()
-        val increaseCounterButton = controller.get().findViewById<TextView>(R.id.btn_increase_counter)
-        val textViewUnderTest = controller.get().findViewById<TextView>(R.id.tv_counter)
-
-        increaseCounterButton.performClick()
-
-        assertThat(textViewUnderTest.text.toString()).isEqualTo("1")
+        onView(withId(R.id.btn_increase_counter))
+            .check(matches(isDisplayed()))
+            .perform(ViewActions.click())
+        onView(
+            allOf(
+                withId(R.id.tv_counter), withText("1")
+            )
+        ).check(matches(isDisplayed()))
     }
 
     @Test
     fun mainActivity_counterTextView_fiveIsDisplayed() {
-        val controller = buildActivity(MainActivity::class.java).setup()
-        val increaseCounterButton = controller.get().findViewById<TextView>(R.id.btn_increase_counter)
-        val textViewUnderTest = controller.get().findViewById<TextView>(R.id.tv_counter)
-
         repeat(5) {
-            increaseCounterButton.performClick()
+            onView(withId(R.id.btn_increase_counter))
+                .check(matches(isDisplayed()))
+                .perform(ViewActions.click())
         }
-
-        assertThat(textViewUnderTest.text.toString()).isEqualTo("5")
+        onView(
+            allOf(
+                withId(R.id.tv_counter), withText("5")
+            )
+        ).check(matches(isDisplayed()))
     }
 }
